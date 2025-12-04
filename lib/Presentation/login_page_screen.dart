@@ -15,11 +15,20 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => LoginViewModel(),
+      child: Consumer<LoginViewModel>(
+        builder: (context, viewModel, child) {
     return Scaffold(
       appBar: AppBar(title: const Text("FitQuest Login"),)
       ,
       body: Padding(padding:  const EdgeInsets.all(16.0),
-      child: Column(children: [TextField(controller: emailController,decoration: InputDecoration(labelText: "Email"),)
+      child: Column(mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        TextField(controller: emailController,
+        decoration: InputDecoration(labelText: "Email"),
+      )
+
       ,const SizedBox(height: 16),
                   TextField(
                     controller: passwordController,
@@ -30,6 +39,9 @@ class LoginScreen extends StatelessWidget {
                   ),],),)
 
       
+    );
+        },
+      ),
     );
   }
 }
