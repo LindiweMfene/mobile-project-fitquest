@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mobile_project_fitquest/Presentation/signup.dart';
 import 'package:mobile_project_fitquest/models/user_model.dart';
+import 'package:mobile_project_fitquest/viewmodels/login_view_model.dart';
 import 'package:provider/provider.dart';
-import 'login_view_model.dart';
+
 import 'home_screen.dart';
 
 class LoginScreen extends StatelessWidget {

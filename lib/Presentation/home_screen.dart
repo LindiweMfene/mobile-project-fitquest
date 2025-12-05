@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mobile_project_fitquest/Presentation/login_view_model.dart';
+import 'package:mobile_project_fitquest/viewmodels/login_view_model.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
