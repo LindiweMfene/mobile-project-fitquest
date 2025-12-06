@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_model.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  final FirebaseAuth _auth =
-      FirebaseAuth.instance; //reference to Firebase authentication service.
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  //reference to Firebase authentication service.
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String?
   errorMessage; //to store error messages during authentication processes.
   bool isLoading =
@@ -35,10 +37,10 @@ class LoginViewModel extends ChangeNotifier {
       );
       final user = credential.user;
       if (user != null) {
-        return UserModel(
-          uid: user.uid,
-          email: user.email ?? '',
-        ); // if email is null, return empty string
+        final doc = await _firestore.collection('users').doc(user.uid).get();
+        final name = doc.data()?['name'] ?? '';
+
+        return UserModel(uid: user.uid, email: user.email ?? '', name: name);
       }
     } on FirebaseAuthException catch (e) {
       errorMessage = e.message;

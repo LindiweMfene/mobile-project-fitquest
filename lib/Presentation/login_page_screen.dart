@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:mobile_project_fitquest/Presentation/signup.dart';
 import 'package:mobile_project_fitquest/models/user_model.dart';
 import 'package:mobile_project_fitquest/viewmodels/login_view_model.dart';
@@ -18,7 +19,14 @@ class LoginScreen extends StatelessWidget {
       child: Consumer<LoginViewModel>(
         builder: (context, viewModel, child) {
           return Scaffold(
-            appBar: AppBar(title: const Text("FitQuest Login")),
+            appBar: AppBar(
+              title: const Text(
+                "login",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: const Color.fromARGB(255, 7, 7, 7),
+              foregroundColor: Colors.white,
+            ),
             body: Stack(
               children: [
                 Positioned(
@@ -46,7 +54,7 @@ class LoginScreen extends StatelessWidget {
                           const Text(
                             "FitQuest",
                             style: TextStyle(
-                              fontSize: 80,
+                              fontSize: 60,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
@@ -109,7 +117,7 @@ class LoginScreen extends StatelessWidget {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => HomeScreen(),
+                                      builder: (_) => HomeScreen(user: user),
                                     ),
                                   );
                                 }

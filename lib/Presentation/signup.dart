@@ -11,6 +11,7 @@ class SignupScreen extends StatelessWidget {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
 
   InputDecoration _buildInputDecoration(String label) {
     return InputDecoration(
@@ -62,7 +63,12 @@ class SignupScreen extends StatelessWidget {
                               color: Colors.white,
                             ),
                           ),
-                          const SizedBox(height: 50),
+                          const SizedBox(height: 16),
+                          TextField(
+                            controller: usernameController,
+                            decoration: _buildInputDecoration('Name'),
+                          ),
+                          const SizedBox(height: 16),
                           TextField(
                             controller: emailController,
                             decoration: _buildInputDecoration('Email'),
@@ -94,6 +100,7 @@ class SignupScreen extends StatelessWidget {
                             child: ElevatedButton(
                               onPressed: () async {
                                 final user = await viewModel.signup(
+                                  usernameController.text,
                                   emailController.text,
                                   passwordController.text,
                                   confirmPasswordController.text,
@@ -102,7 +109,7 @@ class SignupScreen extends StatelessWidget {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => const HomeScreen(),
+                                      builder: (_) => HomeScreen(user: user),
                                     ),
                                   );
                                 }
