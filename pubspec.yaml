@@ -20,7 +20,19 @@ dependencies:
   firebase_auth: ^6.1.2
   provider: ^6.1.5+1
   cloud_firestore: ^6.1.0
+  google_maps_flutter: ^2.4.7
+  geolocator: ^9.0.2 
+  permission_handler: ^11.0.1
+  sqflite: ^2.2.5
+  path: ^1.8.4
+  connectivity_plus: ^4.0.0
+  uuid: ^4.0.0
   
+  
+
+
+
+
 
 dev_dependencies:
   flutter_test:
