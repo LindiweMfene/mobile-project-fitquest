@@ -45,5 +45,14 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to track your runs</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location to track your runs</string>
+
+	<key>GMSApiKey</key>
+	<string>AIzaSyDCDG8lOJsQYqOoieFQs1iEFe4ykRlSxdk</string>
+
+
 </dict>
 </plist>
