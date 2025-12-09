@@ -46,6 +46,14 @@ class RunLocalDB {
       run.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+
+    // Print to console after saving
+    // RunLocalDB.getAllRuns().then((runs) {
+    //   print("=== LOCAL RUNS (SQLite) ===");
+    //   for (var r in runs) {
+    //     print(r.toMap());
+    //   }
+    // });
   }
 
   static Future<List<RunData>> getAllRuns() async {

@@ -6,4 +6,4 @@ class UserModel {
   UserModel({required this.name, required this.uid, required this.email});
 }
 
-// user model for firebase authentication
+// user model for firebase authenticati

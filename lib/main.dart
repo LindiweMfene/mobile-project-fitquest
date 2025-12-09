@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mobile_project_fitquest/Data/run_local_db.dart';
 import 'package:mobile_project_fitquest/Data/run_repository_impl.dart';
 import 'package:mobile_project_fitquest/viewmodels/run_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_project_fitquest/Presentation/login_page_screen.dart';
 
-import 'package:mobile_project_fitquest/viewmodels/signup_viewmodel.dart'; // ✅ Import here
+import 'package:mobile_project_fitquest/viewmodels/signup_viewmodel.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
+  // Print to console after saving
+  RunLocalDB.getAllRuns().then((runs) {
+    print("=== LOCAL RUNS (SQLite) ===");
+    for (var r in runs) {
+      print(r.toMap());
+    }
+  });
 }
 
 class MyApp extends StatelessWidget {
