@@ -261,4 +261,119 @@ class RunViewModel extends ChangeNotifier {
     _positionStream?.cancel();
     super.dispose();
   }
+
+  // ------------------
+  // Progress tracking
+  // ------------------
+  List<RunData> _runs = [];
+  List<RunData> get runs => _runs;
+
+  String _selectedPeriod = 'Week';
+  String get selectedPeriod => _selectedPeriod;
+
+  RunData? _selectedRun;
+  RunData? get selectedRun => _selectedRun;
+
+  // ------------------
+  // Load runs and filter by period
+  // ------------------
+  Future<void> loadRuns() async {
+    _runs = await getAllRuns();
+    _runs = _filterRunsByPeriod(_selectedPeriod);
+    notifyListeners();
+  }
+
+  void setPeriod(String period) {
+    _selectedPeriod = period;
+    _runs = _filterRunsByPeriod(period);
+    notifyListeners();
+  }
+
+  List<RunData> _filterRunsByPeriod(String period) {
+    final now = DateTime.now();
+    DateTime start;
+
+    switch (period) {
+      case 'Week':
+        start = now.subtract(const Duration(days: 7));
+        break;
+      case 'Month':
+        start = DateTime(now.year, now.month - 1, now.day);
+        break;
+      case 'Year':
+        start = DateTime(now.year - 1, now.month, now.day);
+        break;
+      default:
+        start = DateTime(2000);
+    }
+
+    return _runs.where((run) => run.timestamp.isAfter(start)).toList();
+  }
+
+  // ------------------
+  // Stats calculations
+  // ------------------
+  double get totalDistanceKm =>
+      _runs.fold<double>(0.0, (sum, r) => sum + r.distance) / 1000;
+
+  int get totalRuns => _runs.length;
+
+  String get avgPace {
+    if (_runs.isEmpty) return "0:00";
+
+    final totalPaceSeconds = _runs.fold<double>(0.0, (sum, run) {
+      final distanceKm = run.distance / 1000;
+      final durationSec = run.duration?.inSeconds ?? 0;
+      if (distanceKm > 0 && durationSec > 0) {
+        return sum + (durationSec / distanceKm);
+      }
+      return sum;
+    });
+    final avg = totalPaceSeconds / _runs.length;
+    final min = avg ~/ 60;
+    final sec = (avg % 60).round();
+    return "$min:${sec.toString().padLeft(2, '0')}";
+  }
+
+  String get totalTime {
+    final totalSec = _runs.fold<int>(
+      0,
+      (sum, run) => sum + (run.duration?.inSeconds ?? 0),
+    );
+    final hours = totalSec ~/ 3600;
+    final minutes = (totalSec % 3600) ~/ 60;
+    return "${hours}h ${minutes}m";
+  }
+
+  int caloriesForDistance(double km) => (km * 60).round(); // Rough estimate
+
+  // ------------------
+  // Select a run for modal
+  // ------------------
+  void selectRun(RunData run) {
+    _selectedRun = run;
+    notifyListeners();
+  }
+
+  void clearSelectedRun() {
+    _selectedRun = null;
+    notifyListeners();
+  }
+
+  String get avgeragePace {
+    if (_runs.isEmpty) return "0:00";
+
+    final totalPaceSeconds = _runs.fold<double>(0.0, (sum, run) {
+      final distanceKm = run.distance / 1000;
+      final durationSec = run.duration?.inSeconds ?? 0;
+      if (distanceKm > 0 && durationSec > 0) {
+        return sum + (durationSec / distanceKm);
+      }
+      return sum;
+    });
+    final avg = totalPaceSeconds / _runs.length;
+    final min = avg ~/ 60;
+    final sec = (avg % 60).round();
+    return "$min:${sec.toString().padLeft(2, '0')}";
+  }
 }
