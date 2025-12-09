@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_project_fitquest/Presentation/goal_setting_screen.dart';
 import 'package:mobile_project_fitquest/Presentation/progress_screen.dart';
 import 'package:mobile_project_fitquest/Presentation/running_screen.dart';
 import 'package:mobile_project_fitquest/Presentation/settings_screen.dart';
@@ -94,7 +95,12 @@ class _HomeScreenState extends State<HomeScreen> {
               // Fitness Goal Card
               GestureDetector(
                 onTap: () {
-                  setState(() => _selectedIndex = 1);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const GoalSettingScreen(),
+                    ),
+                  );
                 },
                 child: Container(
                   padding: const EdgeInsets.all(20),
