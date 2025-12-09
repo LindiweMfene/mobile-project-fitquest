@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../viewmodels/run_view_model.dart';
 import '../models/run_data.dart';
 
@@ -29,6 +30,13 @@ class _ProgressScreenState extends State<ProgressScreen> {
       _runHistory = runs;
       _isLoading = false;
     });
+  }
+
+  void _showRunDetail(RunData run) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => RunDetailScreen(run: run)),
+    );
   }
 
   @override
@@ -225,6 +233,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                               final distanceKm = run.distance / 1000;
 
                               return _buildRunHistoryCard(
+                                run: run,
                                 date: _formatDate(run.timestamp),
                                 distance: distanceKm.toStringAsFixed(2),
                                 duration: _formatDuration(durationSeconds),
@@ -339,92 +348,96 @@ class _ProgressScreenState extends State<ProgressScreen> {
   }
 
   Widget _buildRunHistoryCard({
+    required RunData run,
     required String date,
     required String distance,
     required String duration,
     required String pace,
     required String calories,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF00E676).withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.directions_run,
-                      color: Color(0xFF00E676),
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Morning Run",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+    return GestureDetector(
+      onTap: () => _showRunDetail(run),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF00E676).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      Text(
-                        date,
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.5),
-                          fontSize: 12,
-                        ),
+                      child: const Icon(
+                        Icons.directions_run,
+                        color: Color(0xFF00E676),
+                        size: 20,
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              Icon(Icons.chevron_right, color: Colors.white.withOpacity(0.3)),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildRunStat(Icons.route, distance, "km"),
-              Container(
-                width: 1,
-                height: 30,
-                color: Colors.white.withOpacity(0.1),
-              ),
-              _buildRunStat(Icons.timer, duration, ""),
-              Container(
-                width: 1,
-                height: 30,
-                color: Colors.white.withOpacity(0.1),
-              ),
-              _buildRunStat(Icons.speed, pace, "/km"),
-              Container(
-                width: 1,
-                height: 30,
-                color: Colors.white.withOpacity(0.1),
-              ),
-              _buildRunStat(Icons.local_fire_department, calories, "kcal"),
-            ],
-          ),
-        ],
+                    ),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Morning Run",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          date,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.5),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Icon(Icons.chevron_right, color: Colors.white.withOpacity(0.3)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildRunStat(Icons.route, distance, "km"),
+                Container(
+                  width: 1,
+                  height: 30,
+                  color: Colors.white.withOpacity(0.1),
+                ),
+                _buildRunStat(Icons.timer, duration, ""),
+                Container(
+                  width: 1,
+                  height: 30,
+                  color: Colors.white.withOpacity(0.1),
+                ),
+                _buildRunStat(Icons.speed, pace, "/km"),
+                Container(
+                  width: 1,
+                  height: 30,
+                  color: Colors.white.withOpacity(0.1),
+                ),
+                _buildRunStat(Icons.local_fire_department, calories, "kcal"),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -495,7 +508,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
   }
 
   int _calculateCalories(double distanceKm) {
-    // Rough estimate: ~60 calories per km
     return (distanceKm * 60).round();
   }
 
@@ -526,5 +538,394 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final totalHours = totalTimeSeconds ~/ 3600;
     final totalMinutes = (totalTimeSeconds % 3600) ~/ 60;
     return "${totalHours}h ${totalMinutes}m";
+  }
+}
+
+// Run Detail Screen with Route Replay
+class RunDetailScreen extends StatefulWidget {
+  final RunData run;
+
+  const RunDetailScreen({super.key, required this.run});
+
+  @override
+  State<RunDetailScreen> createState() => _RunDetailScreenState();
+}
+
+class _RunDetailScreenState extends State<RunDetailScreen>
+    with SingleTickerProviderStateMixin {
+  GoogleMapController? _mapController;
+  late AnimationController _animationController;
+  int _currentPositionIndex = 0;
+  bool _isReplaying = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 3))
+          ..addListener(() {
+            if (_isReplaying && widget.run.route.isNotEmpty) {
+              setState(() {
+                _currentPositionIndex =
+                    (_animationController.value * (widget.run.route.length - 1))
+                        .round()
+                        .clamp(0, widget.run.route.length - 1);
+              });
+            }
+          });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _mapController?.dispose();
+    super.dispose();
+  }
+
+  void _toggleReplay() {
+    setState(() {
+      if (_isReplaying) {
+        _animationController.stop();
+        _isReplaying = false;
+      } else {
+        _isReplaying = true;
+        _currentPositionIndex = 0;
+        _animationController.forward(from: 0.0).then((_) {
+          setState(() {
+            _isReplaying = false;
+          });
+        });
+      }
+    });
+  }
+
+  void _resetReplay() {
+    _animationController.reset();
+    setState(() {
+      _currentPositionIndex = 0;
+      _isReplaying = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final durationSeconds = widget.run.duration?.inSeconds ?? 0;
+    final distanceKm = widget.run.distance / 1000;
+    final hasRoute = widget.run.route.isNotEmpty;
+
+    return Scaffold(
+      backgroundColor: const Color(0xFF1a1a1a),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.arrow_back, color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Run Details",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        _formatDate(widget.run.timestamp),
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.6),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // Map with Route
+            if (hasRoute)
+              Container(
+                height: 300,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.1),
+                    width: 1,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Stack(
+                    children: [
+                      GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: widget.run.route.first,
+                          zoom: 15,
+                        ),
+                        polylines: {
+                          Polyline(
+                            polylineId: const PolylineId('route'),
+                            points: widget.run.route
+                                .take(_currentPositionIndex + 1)
+                                .toList(),
+                            color: const Color(0xFF00E676),
+                            width: 4,
+                          ),
+                        },
+                        markers: {
+                          Marker(
+                            markerId: const MarkerId('start'),
+                            position: widget.run.route.first,
+                            icon: BitmapDescriptor.defaultMarkerWithHue(
+                              BitmapDescriptor.hueGreen,
+                            ),
+                          ),
+                          if (_currentPositionIndex > 0)
+                            Marker(
+                              markerId: const MarkerId('current'),
+                              position: widget.run.route[_currentPositionIndex],
+                              icon: BitmapDescriptor.defaultMarkerWithHue(
+                                BitmapDescriptor.hueAzure,
+                              ),
+                            ),
+                          if (_currentPositionIndex ==
+                              widget.run.route.length - 1)
+                            Marker(
+                              markerId: const MarkerId('end'),
+                              position: widget.run.route.last,
+                              icon: BitmapDescriptor.defaultMarkerWithHue(
+                                BitmapDescriptor.hueRed,
+                              ),
+                            ),
+                        },
+                        myLocationButtonEnabled: false,
+                        zoomControlsEnabled: false,
+                        onMapCreated: (controller) {
+                          _mapController = controller;
+                        },
+                      ),
+                      // Replay Controls
+                      Positioned(
+                        bottom: 16,
+                        left: 16,
+                        right: 16,
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              IconButton(
+                                onPressed: _resetReplay,
+                                icon: const Icon(
+                                  Icons.replay,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: _toggleReplay,
+                                icon: Icon(
+                                  _isReplaying ? Icons.pause : Icons.play_arrow,
+                                  color: const Color(0xFF00E676),
+                                  size: 32,
+                                ),
+                              ),
+                              Text(
+                                "${(_currentPositionIndex / widget.run.route.length * 100).toStringAsFixed(0)}%",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+            const SizedBox(height: 24),
+
+            // Stats Grid
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildDetailCard(
+                            "Distance",
+                            distanceKm.toStringAsFixed(2),
+                            "km",
+                            Icons.route,
+                            const Color(0xFF00E676),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildDetailCard(
+                            "Duration",
+                            _formatDuration(durationSeconds),
+                            "",
+                            Icons.timer,
+                            const Color(0xFF00B0FF),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildDetailCard(
+                            "Avg Pace",
+                            _formatPace(durationSeconds, distanceKm),
+                            "/km",
+                            Icons.speed,
+                            const Color(0xFFFF6B35),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildDetailCard(
+                            "Calories",
+                            (distanceKm * 60).round().toString(),
+                            "kcal",
+                            Icons.local_fire_department,
+                            const Color(0xFFAB47BC),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailCard(
+    String label,
+    String value,
+    String unit,
+    IconData icon,
+    Color color,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 28),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.6),
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                value,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (unit.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(left: 4, bottom: 4),
+                  child: Text(
+                    unit,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.6),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return "${months[date.month - 1]} ${date.day}, ${date.year}";
+  }
+
+  String _formatDuration(int seconds) {
+    final minutes = seconds ~/ 60;
+    final secs = seconds % 60;
+    return "${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}";
+  }
+
+  String _formatPace(int durationSeconds, double distanceKm) {
+    if (distanceKm == 0) return "0:00";
+    final paceSeconds = durationSeconds / distanceKm;
+    final minutes = paceSeconds ~/ 60;
+    final seconds = (paceSeconds % 60).round();
+    return "$minutes:${seconds.toString().padLeft(2, '0')}";
   }
 }
