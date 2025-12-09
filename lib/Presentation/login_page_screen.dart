@@ -54,7 +54,7 @@ class LoginScreen extends StatelessWidget {
                           const Text(
                             "FitQuest",
                             style: TextStyle(
-                              fontSize: 75,
+                              fontSize: 60,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
